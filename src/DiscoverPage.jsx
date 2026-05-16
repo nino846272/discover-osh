@@ -131,7 +131,7 @@ export default function DiscoverPage() {
           ✕
         </button>
       </div>
-      <div className="p-3 flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
+      <div className="py-2 overflow-y-auto flex-1 min-h-0">
         {filtered.map(place => {
           const isSelected = selectedPlace?.id === place.id
           const color = getCategoryColor(place)
@@ -142,33 +142,31 @@ export default function DiscoverPage() {
                 setSelectedPlace(place)
                 setSidebarOpen(false)
               }}
-              className={`w-full text-left p-4 rounded-2xl transition-all duration-300 group relative isolate ${
-                isSelected
-                  ? 'bg-slate-800/80 shadow-lg'
-                  : 'bg-transparent hover:bg-slate-800/40'
+              className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 group ${
+                isSelected ? 'bg-slate-800/70' : 'hover:bg-slate-800/30'
               }`}
-              style={isSelected ? { borderLeft: `4px solid ${color}` } : { borderLeft: '4px solid transparent' }}
+              style={isSelected
+                ? { borderLeft: `3px solid ${color}`, paddingLeft: '13px' }
+                : { borderLeft: '3px solid transparent', paddingLeft: '13px' }
+              }
             >
-              {isSelected && (
-                <div className="absolute inset-0 -z-10 rounded-2xl opacity-10 pointer-events-none" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }}></div>
+              {/* Category color dot */}
+              <span
+                className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                style={{ background: color, boxShadow: isSelected ? `0 0 8px ${color}80` : 'none' }}
+              />
+              {/* Place name */}
+              <span className={`flex-1 min-w-0 text-sm font-semibold truncate transition-colors ${
+                isSelected ? 'text-white' : 'text-slate-300 group-hover:text-white'
+              }`}>
+                {place.name}
+              </span>
+              {/* Open time */}
+              {place.hours && (
+                <span className="text-[11px] text-slate-500 flex-shrink-0 font-mono">
+                  {place.hours.split('–')[0].trim()}
+                </span>
               )}
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0" style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
-                  {place.category.includes('pool') ? '🏊' :
-                   place.category.includes('bank') ? '🏦' :
-                   place.category.includes('shashlik') ? '🔥' :
-                   place.category.includes('samsa') ? '🥟' : '🍽️'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`font-bold text-[15px] leading-tight transition-colors ${isSelected ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{place.name}</p>
-                  <p className="text-xs mt-1.5 text-slate-400 leading-relaxed" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{place.description}</p>
-                  {place.hours && (
-                    <div className="flex items-center gap-1.5 mt-2 text-[11px] font-medium text-slate-500">
-                      <span className="text-slate-400">🕒</span> {place.hours}
-                    </div>
-                  )}
-                </div>
-              </div>
             </button>
           )
         })}
