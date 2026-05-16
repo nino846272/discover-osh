@@ -258,4 +258,30 @@ export const PLACES = [
     phone: '+996 708 14 94 80',
     //added
   },
+  {
+    id: 21,
+    name: 'Oybek Mantykanaasy',
+    description: 'Specializes in mayda manti — small manti filled with potato, made with traditional manti dough (not regular dumpling dough). Unique local dish.',
+    category: ['food'],
+    lat: 40.541740,
+    lng: 72.789297,
+    address: 'Osh',
+    hours: 'Daily 08:00 – 19:00',
+    tip: 'Mayda manti = potato filling + manti dough. Softer and juicier than regular manti — a must try!',
+    phone: '+996 550 75 00 63',
+    //added
+  },
+  {
+    id: 22,
+    name: 'Messto Coffee House',
+    description: 'Cozy coffee house with soups. Good spot for a quiet coffee break or a warm bowl of soup.',
+    category: ['food'],
+    lat: 40.518204,
+    lng: 72.799329,
+    address: 'Ulitsa Alieva 104, 1st floor, Frunze district, Osh',
+    hours: 'Mon–Fri 09:00 – 23:00 / Sat–Sun 10:00 – 23:00',
+    tip: 'Rare combo — coffee + soups under one roof. Great for a working lunch',
+    phone: '+996 997 52 05 20',
+    //added
+  },
 ];
