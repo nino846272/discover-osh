@@ -10,6 +10,7 @@ const CATEGORY_COLORS = {
   samsa:    '#f59e0b',
   pool:     '#0ea5e9',
   bank:     '#10b981',
+  shop:     '#8b5cf6',
 }
 
 function getCategoryColor(place) {
@@ -302,6 +303,16 @@ export default function DiscoverPage() {
                       <div className="flex flex-wrap gap-3 text-xs font-medium text-slate-400">
                         {selectedPlace.hours && <div className="flex items-center gap-1.5"><span className="text-slate-500">🕒</span> {selectedPlace.hours}</div>}
                         {selectedPlace.address && <div className="flex items-center gap-1.5"><span className="text-slate-500">📍</span> {selectedPlace.address}</div>}
+                        {selectedPlace.phone && (
+                          <a href={`tel:${selectedPlace.phone.replace(/\s/g, '')}`} className="flex items-center gap-1.5 hover:text-white transition-colors">
+                            <span className="text-slate-500">📞</span> {selectedPlace.phone}
+                          </a>
+                        )}
+                        {selectedPlace.instagram && (
+                          <a href={`https://instagram.com/${selectedPlace.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-pink-400 transition-colors">
+                            <span>📷</span> @{selectedPlace.instagram}
+                          </a>
+                        )}
                       </div>
                     </div>
                     <button
