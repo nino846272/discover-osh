@@ -5,32 +5,34 @@ import { PLACES, CATEGORIES } from './data/places'
 let L = null
 
 const CATEGORY_COLORS = {
-  food:     '#e85d20',
-  shashlik: '#c0392b',
-  samsa:    '#d35400',
-  pool:     '#2980b9',
-  bank:     '#27ae60',
+  food:     '#f97316', // orange-500
+  shashlik: '#ef4444', // red-500
+  samsa:    '#f59e0b', // amber-500
+  pool:     '#0ea5e9', // sky-500
+  bank:     '#10b981', // emerald-500
 }
 
 function getCategoryColor(place) {
   for (const cat of place.category) {
     if (CATEGORY_COLORS[cat]) return CATEGORY_COLORS[cat]
   }
-  return '#e8a820'
+  return '#eab308' // yellow-500
 }
 
 function createMarkerIcon(color, leafletLib) {
   return leafletLib.divIcon({
     className: '',
     html: `<div style="
-      width:32px;height:32px;border-radius:50% 50% 50% 0;
-      background:${color};border:3px solid #fff;
+      width:36px;height:36px;border-radius:50% 50% 50% 0;
+      background: linear-gradient(135deg, ${color}, #00000040);
+      border:3px solid #ffffff;
       transform:rotate(-45deg);
-      box-shadow:0 2px 8px rgba(0,0,0,0.35);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.4), inset 0 -4px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
     "></div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -34],
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -38],
   })
 }
 
@@ -60,10 +62,11 @@ export default function DiscoverPage() {
         zoomControl: false,
       })
 
-      L.control.zoom({ position: 'bottomright' }).addTo(map)
+      L.control.zoom({ position: 'topright' }).addTo(map)
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap',
+      // Using CartoDB dark matter for a premium dark map
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap © CartoDB',
         maxZoom: 19,
       }).addTo(map)
 
@@ -100,139 +103,160 @@ export default function DiscoverPage() {
   // Pan to selected
   useEffect(() => {
     if (selectedPlace && mapInstanceRef.current) {
-      mapInstanceRef.current.panTo([selectedPlace.lat, selectedPlace.lng], { animate: true })
+      mapInstanceRef.current.flyTo([selectedPlace.lat, selectedPlace.lng], 16, { animate: true, duration: 1.5 })
     }
   }, [selectedPlace])
 
   return (
-    <div className="h-screen w-screen flex flex-col" style={{ fontFamily: "'Nunito', sans-serif", background: '#1a1209' }}>
-
+    <div className="h-screen w-screen flex flex-col font-sans bg-slate-950 text-slate-200 selection:bg-amber-500/30 selection:text-amber-200">
+      
       {/* Header */}
-      <header className="flex-shrink-0 px-4 pt-4 pb-3" style={{ background: '#1a1209' }}>
-        <div className="flex items-center justify-between mb-3">
+      <header className="flex-shrink-0 px-6 pt-5 pb-4 bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/60 shadow-lg z-10">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-white font-black leading-none text-xl" style={{ fontFamily: "'Unbounded', sans-serif", letterSpacing: '-0.02em' }}>
-              ОШ
+            <h1 className="font-black leading-none text-4xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500 drop-shadow-sm">
+              OSH
             </h1>
-            <p className="text-xs mt-0.5" style={{ color: '#e8a820' }}>Лучшие места города</p>
+            <p className="text-xs mt-1 text-slate-400 font-medium tracking-wide uppercase">Best places in the city</p>
           </div>
           <a
             href="#"
-            className="text-xs px-3 py-1.5 rounded-full font-semibold transition-all"
-            style={{ background: '#e8a820', color: '#1a1209' }}
+            className="text-xs px-4 py-2 rounded-full font-bold transition-all duration-300 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 hover:border-slate-600 shadow-sm"
           >
-            ← Туры в Кыргызстан
+            ← Tours in Kyrgyzstan
           </a>
         </div>
 
         {/* Category filters */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => { setActiveCategory(cat.id); setSelectedPlace(null) }}
-              className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
-              style={
-                activeCategory === cat.id
-                  ? { background: cat.color, color: '#fff', border: `2px solid ${cat.color}` }
-                  : { background: 'transparent', color: '#ccc', border: '2px solid #3d2e14' }
-              }
-            >
-              <span>{cat.emoji}</span>
-              <span>{cat.label}</span>
-            </button>
-          ))}
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+          {CATEGORIES.map(cat => {
+            const isActive = activeCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => { setActiveCategory(cat.id); setSelectedPlace(null) }}
+                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ease-out transform hover:-translate-y-0.5 ${
+                  isActive
+                    ? 'shadow-lg scale-105'
+                    : 'bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:bg-slate-800 hover:text-slate-200'
+                }`}
+                style={isActive ? {
+                  background: `${cat.color}20`,
+                  color: cat.color,
+                  border: `1px solid ${cat.color}50`,
+                  boxShadow: `0 4px 12px ${cat.color}30`
+                } : {}}
+              >
+                <span className="text-base">{cat.emoji}</span>
+                <span>{cat.label}</span>
+              </button>
+            )
+          })}
         </div>
       </header>
 
       {/* Main content */}
-      <div className="flex flex-1 overflow-hidden gap-0">
+      <div className="flex flex-1 overflow-hidden relative">
 
         {/* Sidebar — place list */}
-        <div
-          className="flex-shrink-0 overflow-y-auto"
-          style={{
-            width: '300px',
-            background: '#231608',
-            borderRight: '1px solid #3d2e14',
-          }}
-        >
-          <div className="p-3 text-xs font-semibold uppercase tracking-widest" style={{ color: '#7a5c2a' }}>
-            {filtered.length} мест{filtered.length === 1 ? 'о' : filtered.length < 5 ? 'а' : ''}
+        <div className="w-[340px] flex-shrink-0 overflow-y-auto bg-slate-900/60 backdrop-blur-lg border-r border-slate-800/60 z-10 flex flex-col">
+          <div className="px-5 py-4 text-xs font-bold uppercase tracking-widest text-slate-500 sticky top-0 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/50 z-20">
+            {filtered.length} place{filtered.length !== 1 ? 's' : ''} found
           </div>
-          {filtered.map(place => (
-            <button
-              key={place.id}
-              onClick={() => setSelectedPlace(place)}
-              className="w-full text-left px-4 py-3 transition-all"
-              style={
-                selectedPlace?.id === place.id
-                  ? { background: '#3d2e14', borderLeft: `3px solid ${getCategoryColor(place)}` }
-                  : { background: 'transparent', borderLeft: '3px solid transparent' }
-              }
-            >
-              <div className="flex items-start gap-2">
-                <span className="text-lg leading-none mt-0.5">
-                  {place.category.includes('pool') ? '🏊' :
-                   place.category.includes('bank') ? '🏦' :
-                   place.category.includes('shashlik') ? '🔥' :
-                   place.category.includes('samsa') ? '🥟' : '🍽️'}
-                </span>
-                <div>
-                  <p className="font-semibold text-sm leading-tight" style={{ color: '#f5e6c8' }}>{place.name}</p>
-                  <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#7a5c2a' }}>{place.description}</p>
-                  {place.hours && (
-                    <p className="text-xs mt-1" style={{ color: '#e8a820' }}>⏰ {place.hours}</p>
+          <div className="p-3 flex flex-col gap-2">
+            {filtered.map(place => {
+              const isSelected = selectedPlace?.id === place.id;
+              const color = getCategoryColor(place);
+              return (
+                <button
+                  key={place.id}
+                  onClick={() => setSelectedPlace(place)}
+                  className={`w-full text-left p-4 rounded-2xl transition-all duration-300 group relative overflow-hidden ${
+                    isSelected
+                      ? 'bg-slate-800/80 shadow-lg translate-x-1'
+                      : 'bg-transparent hover:bg-slate-800/40'
+                  }`}
+                  style={isSelected ? { borderLeft: `4px solid ${color}` } : { borderLeft: '4px solid transparent' }}
+                >
+                  {isSelected && (
+                    <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }}></div>
                   )}
-                </div>
-              </div>
-            </button>
-          ))}
+                  <div className="flex items-start gap-3 relative z-10">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl flex-shrink-0 shadow-inner" style={{ background: `${color}15`, border: `1px solid ${color}30` }}>
+                      {place.category.includes('pool') ? '🏊' :
+                       place.category.includes('bank') ? '🏦' :
+                       place.category.includes('shashlik') ? '🔥' :
+                       place.category.includes('samsa') ? '🥟' : '🍽️'}
+                    </div>
+                    <div>
+                      <p className={`font-bold text-[15px] leading-tight transition-colors ${isSelected ? 'text-white' : 'text-slate-200 group-hover:text-white'}`}>{place.name}</p>
+                      <p className="text-xs mt-1.5 text-slate-400 line-clamp-2 leading-relaxed">{place.description}</p>
+                      {place.hours && (
+                        <div className="flex items-center gap-1.5 mt-2 text-[11px] font-medium text-slate-500">
+                          <span className="text-slate-400">🕒</span> {place.hours}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
-        {/* Map + detail panel */}
-        <div className="flex-1 flex flex-col overflow-hidden relative">
-          <div ref={mapRef} className="flex-1" />
+        {/* Map */}
+        <div className="flex-1 relative">
+          <div ref={mapRef} className="absolute inset-0 z-0" />
+          
+          {/* Subtle vignette over the map */}
+          <div className="absolute inset-0 pointer-events-none z-0 shadow-[inset_0_0_80px_rgba(0,0,0,0.5)]"></div>
 
-          {/* Selected place detail */}
+          {/* Selected place detail - Floating Card */}
           {selectedPlace && (
-            <div
-              className="flex-shrink-0 p-4"
-              style={{ background: '#231608', borderTop: `3px solid ${getCategoryColor(selectedPlace)}` }}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                  <h2 className="font-black text-base leading-tight" style={{ fontFamily: "'Unbounded', sans-serif", color: '#f5e6c8', fontSize: '15px' }}>
-                    {selectedPlace.name}
-                  </h2>
-                  <p className="text-sm mt-1" style={{ color: '#b89060' }}>{selectedPlace.description}</p>
-                  {selectedPlace.tip && (
-                    <div className="mt-2 text-xs px-2 py-1.5 rounded" style={{ background: '#3d2e14', color: '#e8c87a' }}>
-                      💡 {selectedPlace.tip}
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-lg z-[1000] px-4 animate-in fade-in slide-in-from-bottom-8 duration-300">
+              <div 
+                className="bg-slate-900/90 backdrop-blur-2xl border border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden"
+              >
+                <div className="h-1.5 w-full" style={{ background: `linear-gradient(90deg, ${getCategoryColor(selectedPlace)}, transparent)` }}></div>
+                <div className="p-6">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h2 className="font-black text-xl leading-tight text-white mb-2">
+                        {selectedPlace.name}
+                      </h2>
+                      <p className="text-sm text-slate-300 leading-relaxed mb-4">{selectedPlace.description}</p>
+                      
+                      {selectedPlace.tip && (
+                        <div className="mb-4 text-xs p-3 rounded-xl bg-indigo-500/10 text-indigo-200 border border-indigo-500/20 flex items-start gap-2">
+                          <span className="text-indigo-400 shrink-0">💡</span> 
+                          <span>{selectedPlace.tip}</span>
+                        </div>
+                      )}
+                      
+                      <div className="flex flex-wrap gap-4 mt-2 text-xs font-medium text-slate-400">
+                        {selectedPlace.hours && <div className="flex items-center gap-1.5"><span className="text-slate-500">🕒</span> {selectedPlace.hours}</div>}
+                        {selectedPlace.address && <div className="flex items-center gap-1.5"><span className="text-slate-500">📍</span> {selectedPlace.address}</div>}
+                      </div>
                     </div>
-                  )}
-                  <div className="flex gap-3 mt-2 text-xs" style={{ color: '#7a5c2a' }}>
-                    {selectedPlace.hours && <span>⏰ {selectedPlace.hours}</span>}
-                    {selectedPlace.address && <span>📍 {selectedPlace.address}</span>}
+                    <button
+                      onClick={() => setSelectedPlace(null)}
+                      className="w-8 h-8 rounded-full flex items-center justify-center bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  <div className="mt-6 pt-4 border-t border-slate-800/50 flex justify-end">
+                    <a
+                      href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full bg-slate-100 text-slate-900 hover:bg-white hover:scale-105 active:scale-95 transition-all shadow-md"
+                    >
+                      Open in Google Maps ↗
+                    </a>
                   </div>
                 </div>
-                <button
-                  onClick={() => setSelectedPlace(null)}
-                  className="text-sm px-2 py-1 rounded"
-                  style={{ color: '#7a5c2a', background: '#3d2e14' }}
-                >
-                  ✕
-                </button>
               </div>
-              <a
-                href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                style={{ background: '#e8a820', color: '#1a1209' }}
-              >
-                Открыть в Google Maps →
-              </a>
             </div>
           )}
         </div>
