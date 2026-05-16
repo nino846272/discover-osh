@@ -184,7 +184,7 @@ export default function DiscoverPage() {
             <h1 className="font-black leading-none text-3xl md:text-4xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">
               OSH
             </h1>
-            <p className="text-xs mt-1 text-slate-400 font-medium tracking-wide uppercase">Best places in the city</p>
+            <p className="text-xs mt-1 text-slate-400 font-medium tracking-wide uppercase">My favorite places in Osh</p>
           </div>
           <a
             href="#"
@@ -279,8 +279,8 @@ export default function DiscoverPage() {
             </span>
           </button>
 
-          {/* Selected place detail — floating card (both mobile & desktop) */}
-          {selectedPlace && (
+          {/* Selected place detail — floating card (hidden while sidebar drawer is open) */}
+          {selectedPlace && !sidebarOpen && (
             <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 w-full max-w-lg z-[1000] px-3 md:px-4">
               <div className="bg-slate-900/90 backdrop-blur-2xl border border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden">
                 <div className="h-1.5 w-full" style={{ background: `linear-gradient(90deg, ${getCategoryColor(selectedPlace)}, transparent)` }}></div>
