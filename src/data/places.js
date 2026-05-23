@@ -3,12 +3,12 @@
 // Центр Оша: 40.5283, 72.7985
 
 export const CATEGORIES = [
-  { id: 'all',      label: 'Все места',    emoji: '📍', color: '#e8a820' },
-  { id: 'food',     label: 'Кафе / Еда',   emoji: '🍽️', color: '#e85d20' },
-  { id: 'shashlik', label: 'Шашлык',       emoji: '🔥', color: '#c0392b' },
-  { id: 'samsa',    label: 'Самса / Плов', emoji: '🥟', color: '#d35400' },
-  { id: 'pool',     label: 'Бассейн',      emoji: '🏊', color: '#2980b9' },
-  { id: 'bank',     label: 'Банки / Обмен',emoji: '🏦', color: '#27ae60' },
+  { id: 'all',      label: 'Все места',    icon: 'MapPin', color: '#e8a820' },
+  { id: 'food',     label: 'Кафе / Еда',   icon: 'UtensilsCrossed', color: '#e85d20' },
+  { id: 'shashlik', label: 'Шашлык',       icon: 'Flame', color: '#c0392b' },
+  { id: 'samsa',    label: 'Самса / Плов', icon: 'Wheat', color: '#d35400' },
+  { id: 'pool',     label: 'Бассейн',      icon: 'Waves', color: '#2980b9' },
+  { id: 'bank',     label: 'Банки / Обмен',icon: 'DollarSign', color: '#27ae60' },
 ];
 
 export const PLACES = [

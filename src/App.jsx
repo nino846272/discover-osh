@@ -1,8 +1,35 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
+import { 
+  MapPin, UtensilsCrossed, Flame, Wheat, Waves, DollarSign, X, Clock, Lightbulb
+} from 'lucide-react'
 
 // Dynamic import of leaflet to avoid SSR issues
 let L = null
+
+const ICON_MAP = {
+  MapPin: MapPin,
+  UtensilsCrossed: UtensilsCrossed,
+  Flame: Flame,
+  Wheat: Wheat,
+  Waves: Waves,
+  DollarSign: DollarSign,
+}
+
+const CATEGORY_ICON_MAP = {
+  pool: Waves,
+  bank: DollarSign,
+  shashlik: Flame,
+  samsa: Wheat,
+  food: UtensilsCrossed,
+}
+
+function getPlaceIcon(place) {
+  for (const cat of place.category) {
+    if (CATEGORY_ICON_MAP[cat]) return CATEGORY_ICON_MAP[cat]
+  }
+  return UtensilsCrossed
+}
 
 const CATEGORY_COLORS = {
   food:     '#e85d20',
@@ -138,21 +165,24 @@ export default function App() {
 
         {/* Category filters */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => { setActiveCategory(cat.id); setSelectedPlace(null) }}
-              className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
-              style={
-                activeCategory === cat.id
-                  ? { background: cat.color, color: '#fff', border: `2px solid ${cat.color}` }
-                  : { background: 'transparent', color: '#ccc', border: '2px solid #3d2e14' }
-              }
-            >
-              <span>{cat.emoji}</span>
-              <span>{cat.label}</span>
-            </button>
-          ))}
+          {CATEGORIES.map(cat => {
+            const IconComponent = ICON_MAP[cat.icon]
+            return (
+              <button
+                key={cat.id}
+                onClick={() => { setActiveCategory(cat.id); setSelectedPlace(null) }}
+                className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                style={
+                  activeCategory === cat.id
+                    ? { background: cat.color, color: '#fff', border: `2px solid ${cat.color}` }
+                    : { background: 'transparent', color: '#ccc', border: '2px solid #3d2e14' }
+                }
+              >
+                {IconComponent && <IconComponent size={16} strokeWidth={2.5} />}
+                <span>{cat.label}</span>
+              </button>
+            )
+          })}
         </div>
       </header>
 
@@ -200,12 +230,10 @@ export default function App() {
               }
             >
               <div className="flex items-start gap-2">
-                <span className="text-lg leading-none mt-0.5">
-                  {place.category.includes('pool') ? '🏊' :
-                   place.category.includes('bank') ? '🏦' :
-                   place.category.includes('shashlik') ? '🔥' :
-                   place.category.includes('samsa') ? '🥟' : '🍽️'}
-                </span>
+                {(() => {
+                  const IconComponent = getPlaceIcon(place)
+                  return <IconComponent size={18} strokeWidth={2.5} className="text-current flex-shrink-0 mt-0.5" style={{ color: getCategoryColor(place) }} />
+                })()}
                 <div>
                   <p className="font-semibold text-sm leading-tight" style={{ color: '#f5e6c8' }}>{place.name}</p>
                   <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#7a5c2a' }}>{place.description}</p>
@@ -235,21 +263,32 @@ export default function App() {
                   </h2>
                   <p className="text-sm mt-1" style={{ color: '#b89060' }}>{selectedPlace.description}</p>
                   {selectedPlace.tip && (
-                    <div className="mt-2 text-xs px-2 py-1.5 rounded" style={{ background: '#3d2e14', color: '#e8c87a' }}>
-                      💡 {selectedPlace.tip}
+                    <div className="mt-2 text-xs px-2 py-1.5 rounded flex items-start gap-1.5" style={{ background: '#3d2e14', color: '#e8c87a' }}>
+                      <Lightbulb size={14} className="flex-shrink-0 mt-0.5" />
+                      <span>{selectedPlace.tip}</span>
                     </div>
                   )}
                   <div className="flex gap-3 mt-2 text-xs" style={{ color: '#7a5c2a' }}>
-                    {selectedPlace.hours && <span>⏰ {selectedPlace.hours}</span>}
-                    {selectedPlace.address && <span>📍 {selectedPlace.address}</span>}
+                    {selectedPlace.hours && (
+                      <span className="flex items-center gap-1">
+                        <Clock size={14} className="flex-shrink-0" />
+                        {selectedPlace.hours}
+                      </span>
+                    )}
+                    {selectedPlace.address && (
+                      <span className="flex items-center gap-1">
+                        <MapPin size={14} className="flex-shrink-0" />
+                        {selectedPlace.address}
+                      </span>
+                    )}
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedPlace(null)}
-                  className="text-sm px-2 py-1 rounded"
+                  className="text-sm p-1 rounded hover:opacity-75 transition-opacity"
                   style={{ color: '#7a5c2a', background: '#3d2e14' }}
                 >
-                  ✕
+                  <X size={18} />
                 </button>
               </div>
               <a
