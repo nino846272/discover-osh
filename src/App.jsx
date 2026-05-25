@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
-import { 
+import {
   MapPin, UtensilsCrossed, Flame, Wheat, Waves, DollarSign, X, Clock, Lightbulb
 } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
@@ -163,7 +163,7 @@ export default function App() {
               {t('ui.mobilePlacesButton')}
             </button>
             <a
-              href="#"
+              href="https://gastro-etno-tour.vercel.app"
               className="text-xs px-3 py-1.5 rounded-full font-semibold transition-all"
               style={{ background: '#e8a820', color: '#1a1209' }}
             >
