@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
+import { useLanguage } from './context/LanguageContext'
 
 // Dynamic import of leaflet to avoid SSR issues
 let L = null
@@ -38,6 +39,7 @@ function createMarkerIcon(color, leafletLib) {
 }
 
 export default function DiscoverPage() {
+  const { lang, setLang, t, tPlural } = useLanguage()
   const [activeCategory, setActiveCategory] = useState('all')
   const [selectedPlace, setSelectedPlace] = useState(null)
   const [mapReady, setMapReady] = useState(false)
@@ -122,7 +124,7 @@ export default function DiscoverPage() {
   const SidebarContent = () => (
     <>
       <div className="px-5 py-4 text-xs font-bold uppercase tracking-widest text-slate-500 sticky top-0 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/50 z-20 flex items-center justify-between">
-        <span>{filtered.length} place{filtered.length !== 1 ? 's' : ''} found</span>
+        <span>{tPlural(filtered.length, 'ui.placesCount')}</span>
         {/* Close button — mobile only */}
         <button
           onClick={() => setSidebarOpen(false)}
@@ -183,16 +185,24 @@ export default function DiscoverPage() {
         <div className="flex items-center justify-between mb-3 md:mb-4">
           <div>
             <h1 className="font-black leading-none text-3xl md:text-4xl tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-500">
-              OSH
+              {t('ui.title')}
             </h1>
-            <p className="text-xs mt-1 text-slate-400 font-medium tracking-wide uppercase">My favorite places in Osh</p>
+            <p className="text-xs mt-1 text-slate-400 font-medium tracking-wide uppercase">{t('ui.subtitle')}</p>
           </div>
-          <a
-            href="#"
-            className="text-xs px-3 md:px-4 py-2 rounded-full font-bold transition-all duration-300 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 hover:border-slate-600 shadow-sm"
-          >
-            ← Tours in Kyrgyzstan
-          </a>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')}
+              className="text-xs px-3 py-2 rounded-full font-bold transition-all duration-300 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 hover:border-slate-600 shadow-sm"
+            >
+              {lang.toUpperCase()}
+            </button>
+            <a
+              href=""
+              className="text-xs px-3 md:px-4 py-2 rounded-full font-bold transition-all duration-300 bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700 hover:border-slate-600 shadow-sm"
+            >
+              {t('ui.toursLink')}
+            </a>
+          </div>
         </div>
 
         {/* Category filters */}
@@ -216,7 +226,7 @@ export default function DiscoverPage() {
                 } : {}}
               >
                 <span className="text-sm md:text-base">{cat.emoji}</span>
-                <span>{cat.label}</span>
+                <span>{t('categories.' + cat.id)}</span>
               </button>
             )
           })}
@@ -271,7 +281,7 @@ export default function DiscoverPage() {
               <line x1="3" y1="12" x2="21" y2="12" />
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
-            <span>Places</span>
+            <span>{t('ui.mobilePlacesButton')}</span>
             <span
               className="text-xs font-bold px-1.5 py-0.5 rounded-full text-white"
               style={{ background: '#f97316' }}
@@ -329,7 +339,7 @@ export default function DiscoverPage() {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-full bg-slate-100 text-slate-900 hover:bg-white hover:scale-105 active:scale-95 transition-all shadow-md"
                     >
-                      Open in Google Maps ↗
+                      {t('ui.openInGoogleMaps')}
                     </a>
                   </div>
                 </div>

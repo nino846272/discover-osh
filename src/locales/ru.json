@@ -1,0 +1,26 @@
+{
+  "ui": {
+    "title": "ОШ",
+    "subtitle": "Лучшие места города",
+    "mobilePlacesButton": "Места",
+    "toursLink": "← Туры в Кыргызстан",
+    "placesCount": {
+      "one": "место",
+      "few": "места",
+      "many": "мест"
+    },
+    "close": "Закрыть",
+    "openInGoogleMaps": "Открыть в Google Maps →",
+    "tip": "Совет",
+    "hours": "Время работы",
+    "address": "Адрес"
+  },
+  "categories": {
+    "all": "Все места",
+    "food": "Кафе / Еда",
+    "shashlik": "Шашлык",
+    "samsa": "Самса / Плов",
+    "pool": "Бассейн",
+    "bank": "Банки / Обмен"
+  }
+}

@@ -3,6 +3,7 @@ import { PLACES, CATEGORIES } from './data/places'
 import { 
   MapPin, UtensilsCrossed, Flame, Wheat, Waves, DollarSign, X, Clock, Lightbulb
 } from 'lucide-react'
+import { useLanguage } from './context/LanguageContext'
 
 // Dynamic import of leaflet to avoid SSR issues
 let L = null
@@ -62,6 +63,7 @@ function createMarkerIcon(color, leafletLib) {
 }
 
 export default function App() {
+  const { lang, setLang, t, tPlural } = useLanguage()
   const [activeCategory, setActiveCategory] = useState('all')
   const [selectedPlace, setSelectedPlace] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -140,25 +142,32 @@ export default function App() {
         <div className="flex items-center justify-between mb-3 gap-3">
           <div>
             <h1 className="text-white font-black leading-none text-xl" style={{ fontFamily: "'Unbounded', sans-serif", letterSpacing: '-0.02em' }}>
-              ОШ
+              {t('ui.title')}
             </h1>
-            <p className="text-xs mt-0.5" style={{ color: '#e8a820' }}>Лучшие места города</p>
+            <p className="text-xs mt-0.5" style={{ color: '#e8a820' }}>{t('ui.subtitle')}</p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')}
+              className="text-xs px-2.5 py-1 rounded-full font-semibold border transition-all hover:opacity-80"
+              style={{ borderColor: '#e8a820', color: '#e8a820', background: 'transparent' }}
+            >
+              {lang.toUpperCase()}
+            </button>
             <button
               type="button"
               onClick={() => setSidebarOpen(true)}
               className="md:hidden text-xs px-3 py-1.5 rounded-full font-semibold transition-all"
               style={{ background: '#e8a820', color: '#1a1209' }}
             >
-              Места
+              {t('ui.mobilePlacesButton')}
             </button>
             <a
               href="#"
               className="text-xs px-3 py-1.5 rounded-full font-semibold transition-all"
               style={{ background: '#e8a820', color: '#1a1209' }}
             >
-              ← Туры в Кыргызстан
+              {t('ui.toursLink')}
             </a>
           </div>
         </div>
@@ -179,7 +188,7 @@ export default function App() {
                 }
               >
                 {IconComponent && <IconComponent size={16} strokeWidth={2.5} />}
-                <span>{cat.label}</span>
+                <span>{t('categories.' + cat.id)}</span>
               </button>
             )
           })}
@@ -201,7 +210,7 @@ export default function App() {
         >
           <div className="flex items-center justify-between gap-2 p-3 border-b border-[#3d2e14] md:hidden">
             <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#7a5c2a' }}>
-              {filtered.length} мест{filtered.length === 1 ? 'о' : filtered.length < 5 ? 'а' : ''}
+              {tPlural(filtered.length, 'ui.placesCount')}
             </div>
             <button
               type="button"
@@ -209,11 +218,11 @@ export default function App() {
               className="text-xs px-3 py-1.5 rounded-full font-semibold"
               style={{ background: '#e8a820', color: '#1a1209' }}
             >
-              Закрыть
+              {t('ui.close')}
             </button>
           </div>
           <div className="hidden p-3 text-xs font-semibold uppercase tracking-widest md:block" style={{ color: '#7a5c2a' }}>
-            {filtered.length} мест{filtered.length === 1 ? 'о' : filtered.length < 5 ? 'а' : ''}
+            {tPlural(filtered.length, 'ui.placesCount')}
           </div>
           {filtered.map(place => (
             <button
@@ -298,7 +307,7 @@ export default function App() {
                 className="mt-3 inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
                 style={{ background: '#e8a820', color: '#1a1209' }}
               >
-                Открыть в Google Maps →
+                {t('ui.openInGoogleMaps')}
               </a>
             </div>
           )}

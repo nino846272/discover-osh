@@ -1,0 +1,25 @@
+{
+  "ui": {
+    "title": "OSH",
+    "subtitle": "Best places in the city",
+    "mobilePlacesButton": "Places",
+    "toursLink": "← Tours in Kyrgyzstan",
+    "placesCount": {
+      "one": "place found",
+      "other": "places found"
+    },
+    "close": "Close",
+    "openInGoogleMaps": "Open in Google Maps →",
+    "tip": "Tip",
+    "hours": "Hours",
+    "address": "Address"
+  },
+  "categories": {
+    "all": "All Places",
+    "food": "Cafe / Food",
+    "shashlik": "Shashlik",
+    "samsa": "Samsa / Plov",
+    "pool": "Pool",
+    "bank": "Banks / Exchange"
+  }
+}
