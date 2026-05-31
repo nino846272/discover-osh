@@ -12,7 +12,42 @@
     "openInGoogleMaps": "Open in Google Maps →",
     "tip": "Tip",
     "hours": "Hours",
-    "address": "Address"
+    "address": "Address",
+    "phone": "Phone",
+    "website": "Website",
+    "myLocation": "My location",
+    "locationDenied": "Allow location access in your browser settings",
+    "locationUnavailable": "Could not determine your location"
+  },
+  "places": {
+    "1": {
+      "name": "Uluk-Ata",
+      "description": "Restaurant. Tashkent-style plov, shashlik, samsa.",
+      "address": "133 A. Shakirov St., Osh"
+    },
+    "2": {
+      "name": "Semeyny",
+      "description": "Family cafe with delivery. Salads, soups, plov, manti, charcoal shashlik.",
+      "address": "123–125 Askar Shakirov St., Osh 723500",
+      "hours": "Daily 06:00 – 02:00",
+      "tip": "Menu and delivery orders at semeyniy.com"
+    },
+    "4": {
+      "name": "Oybek Manti House",
+      "description": "Mayda manti are traditional mini dumplings — the signature dish of Osh, the southern capital of Kyrgyzstan.",
+      "hours": "Daily 08:00 – 19:00"
+    },
+    "5": {
+      "name": "Mecto Coffee",
+      "description": "Coffee house.",
+      "address": "104 Aliyev St., 1st floor, Osh",
+      "hours": "Mon–Fri 09:00–23:00, Sat–Sun 10:00–23:00"
+    },
+    "6": {
+      "name": "Boorsok",
+      "description": "Cafe with national dishes and boorsok (fried dough).",
+      "tip": "Boorsok with honey for breakfast — a local classic"
+    }
   },
   "categories": {
     "all": "All Places",

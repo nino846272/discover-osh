@@ -21,7 +21,7 @@ export function LanguageProvider({ children }) {
   }
 
   // Translation helper
-  const t = (path) => {
+  const t = (path) => { 
     const keys = path.split('.')
     let current = translations[lang]
     for (const key of keys) {
@@ -41,6 +41,13 @@ export function LanguageProvider({ children }) {
       }
     }
     return current
+  }
+
+  // Place fields: current language only, then fallback from places.js (never RU when EN is on)
+  const tPlace = (placeId, field, fallback = '') => {
+    const id = String(placeId)
+    const value = translations[lang]?.places?.[id]?.[field]
+    return value !== undefined ? value : fallback
   }
 
   // Pluralization translation helper
@@ -64,7 +71,7 @@ export function LanguageProvider({ children }) {
   }
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t, tPlural }}>
+    <LanguageContext.Provider value={{ lang, setLang, t, tPlace, tPlural }}>
       {children}
     </LanguageContext.Provider>
   )

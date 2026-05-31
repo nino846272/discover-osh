@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
 import {
-  MapPin, UtensilsCrossed, Flame, Wheat, Waves, DollarSign, X, Clock, Lightbulb
+  MapPin, UtensilsCrossed, Flame, Wheat, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
 } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 
@@ -47,6 +47,10 @@ function getCategoryColor(place) {
   return '#e8a820'
 }
 
+function getPlaceField(place, field, tPlace) {
+  return tPlace(place.id, field, place[field] ?? '')
+}
+
 function createMarkerIcon(color, leafletLib) {
   return leafletLib.divIcon({
     className: '',
@@ -62,15 +66,29 @@ function createMarkerIcon(color, leafletLib) {
   })
 }
 
+function createUserLocationIcon(leafletLib) {
+  return leafletLib.divIcon({
+    className: 'user-location-marker',
+    html: '<div class="user-location-dot"><div class="user-location-pulse"></div></div>',
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  })
+}
+
 export default function App() {
-  const { lang, setLang, t, tPlural } = useLanguage()
+  const { lang, setLang, t, tPlace, tPlural } = useLanguage()
   const [activeCategory, setActiveCategory] = useState('all')
   const [selectedPlace, setSelectedPlace] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [mapReady, setMapReady] = useState(false)
+  const [locationError, setLocationError] = useState(null)
+  const [locating, setLocating] = useState(false)
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
   const markersRef = useRef([])
+  const userMarkerRef = useRef(null)
+  const userCircleRef = useRef(null)
+  const watchIdRef = useRef(null)
 
   const filtered = activeCategory === 'all'
     ? PLACES
@@ -133,6 +151,72 @@ export default function App() {
       mapInstanceRef.current.panTo([selectedPlace.lat, selectedPlace.lng], { animate: true })
     }
   }, [selectedPlace])
+
+  useEffect(() => {
+    return () => {
+      if (watchIdRef.current != null) {
+        navigator.geolocation.clearWatch(watchIdRef.current)
+      }
+    }
+  }, [])
+
+  function locateUser() {
+    if (!mapReady || !mapInstanceRef.current || !L) return
+
+    if (!navigator.geolocation) {
+      setLocationError('unavailable')
+      return
+    }
+
+    setLocating(true)
+    setLocationError(null)
+
+    const onSuccess = (pos) => {
+      const { latitude, longitude, accuracy } = pos.coords
+      const latlng = [latitude, longitude]
+      const map = mapInstanceRef.current
+
+      if (!userMarkerRef.current) {
+        userMarkerRef.current = L.marker(latlng, {
+          icon: createUserLocationIcon(L),
+          zIndexOffset: 1000,
+        }).addTo(map)
+      } else {
+        userMarkerRef.current.setLatLng(latlng)
+      }
+
+      if (userCircleRef.current) {
+        userCircleRef.current.setLatLng(latlng).setRadius(accuracy)
+      } else {
+        userCircleRef.current = L.circle(latlng, {
+          radius: accuracy,
+          color: '#4285F4',
+          fillColor: '#4285F4',
+          fillOpacity: 0.12,
+          weight: 1,
+        }).addTo(map)
+      }
+
+      map.panTo(latlng, { animate: true })
+      setLocating(false)
+      setLocationError(null)
+    }
+
+    const onError = (err) => {
+      setLocating(false)
+      setLocationError(err.code === 1 ? 'denied' : 'unavailable')
+    }
+
+    if (watchIdRef.current != null) {
+      navigator.geolocation.clearWatch(watchIdRef.current)
+    }
+
+    watchIdRef.current = navigator.geolocation.watchPosition(onSuccess, onError, {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+      timeout: 15000,
+    })
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col" style={{ fontFamily: "'Nunito', sans-serif", background: '#1a1209' }}>
@@ -244,10 +328,10 @@ export default function App() {
                   return <IconComponent size={18} strokeWidth={2.5} className="text-current flex-shrink-0 mt-0.5" style={{ color: getCategoryColor(place) }} />
                 })()}
                 <div>
-                  <p className="font-semibold text-sm leading-tight" style={{ color: '#f5e6c8' }}>{place.name}</p>
-                  <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#7a5c2a' }}>{place.description}</p>
-                  {place.hours && (
-                    <p className="text-xs mt-1" style={{ color: '#e8a820' }}>⏰ {place.hours}</p>
+                  <p className="font-semibold text-sm leading-tight" style={{ color: '#f5e6c8' }}>{getPlaceField(place, 'name', tPlace)}</p>
+                  <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#7a5c2a' }}>{getPlaceField(place, 'description', tPlace)}</p>
+                  {(getPlaceField(place, 'hours', tPlace) || place.hours) && (
+                    <p className="text-xs mt-1" style={{ color: '#e8a820' }}>⏰ {getPlaceField(place, 'hours', tPlace) || place.hours}</p>
                   )}
                 </div>
               </div>
@@ -259,6 +343,28 @@ export default function App() {
         <div className="flex-1 flex flex-col overflow-hidden relative">
           <div ref={mapRef} className="flex-1 relative z-0" />
 
+          <div className="absolute left-3 bottom-24 z-[1000] flex flex-col items-start gap-2 md:bottom-3">
+            <button
+              type="button"
+              onClick={locateUser}
+              disabled={!mapReady || locating}
+              title={t('ui.myLocation')}
+              aria-label={t('ui.myLocation')}
+              className="flex items-center justify-center w-10 h-10 rounded-full shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
+              style={{ background: '#fff', color: locating ? '#7a5c2a' : '#4285F4', border: '2px solid #e8a820' }}
+            >
+              <LocateFixed size={20} className={locating ? 'animate-pulse' : ''} />
+            </button>
+            {locationError && (
+              <p
+                className="max-w-[200px] text-xs px-2 py-1.5 rounded-lg shadow-md"
+                style={{ background: '#231608', color: '#e8c87a', border: '1px solid #3d2e14' }}
+              >
+                {t(locationError === 'denied' ? 'ui.locationDenied' : 'ui.locationUnavailable')}
+              </p>
+            )}
+          </div>
+
           {/* Selected place detail */}
           {selectedPlace && (
             <div
@@ -268,27 +374,37 @@ export default function App() {
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
                   <h2 className="font-black text-base leading-tight" style={{ fontFamily: "'Unbounded', sans-serif", color: '#f5e6c8', fontSize: '15px' }}>
-                    {selectedPlace.name}
+                    {getPlaceField(selectedPlace, 'name', tPlace)}
                   </h2>
-                  <p className="text-sm mt-1" style={{ color: '#b89060' }}>{selectedPlace.description}</p>
-                  {selectedPlace.tip && (
+                  <p className="text-sm mt-1" style={{ color: '#b89060' }}>{getPlaceField(selectedPlace, 'description', tPlace)}</p>
+                  {(getPlaceField(selectedPlace, 'tip', tPlace) || selectedPlace.tip) && (
                     <div className="mt-2 text-xs px-2 py-1.5 rounded flex items-start gap-1.5" style={{ background: '#3d2e14', color: '#e8c87a' }}>
                       <Lightbulb size={14} className="flex-shrink-0 mt-0.5" />
-                      <span>{selectedPlace.tip}</span>
+                      <span>{getPlaceField(selectedPlace, 'tip', tPlace) || selectedPlace.tip}</span>
                     </div>
                   )}
-                  <div className="flex gap-3 mt-2 text-xs" style={{ color: '#7a5c2a' }}>
-                    {selectedPlace.hours && (
+                  <div className="flex flex-wrap gap-3 mt-2 text-xs" style={{ color: '#7a5c2a' }}>
+                    {(getPlaceField(selectedPlace, 'hours', tPlace) || selectedPlace.hours) && (
                       <span className="flex items-center gap-1">
                         <Clock size={14} className="flex-shrink-0" />
-                        {selectedPlace.hours}
+                        {getPlaceField(selectedPlace, 'hours', tPlace) || selectedPlace.hours}
                       </span>
                     )}
-                    {selectedPlace.address && (
+                    {(getPlaceField(selectedPlace, 'address', tPlace) || selectedPlace.address) && (
                       <span className="flex items-center gap-1">
                         <MapPin size={14} className="flex-shrink-0" />
-                        {selectedPlace.address}
+                        {getPlaceField(selectedPlace, 'address', tPlace) || selectedPlace.address}
                       </span>
+                    )}
+                    {selectedPlace.phone && (
+                      <a
+                        href={`tel:+996${selectedPlace.phone.replace(/^0/, '')}`}
+                        className="flex items-center gap-1 hover:opacity-80"
+                        style={{ color: '#e8a820' }}
+                      >
+                        <Phone size={14} className="flex-shrink-0" />
+                        {selectedPlace.phone}
+                      </a>
                     )}
                   </div>
                 </div>
@@ -300,15 +416,28 @@ export default function App() {
                   <X size={18} />
                 </button>
               </div>
-              <a
-                href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                style={{ background: '#e8a820', color: '#1a1209' }}
-              >
-                {t('ui.openInGoogleMaps')}
-              </a>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <a
+                  href={selectedPlace.mapsUrl || `https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                  style={{ background: '#e8a820', color: '#1a1209' }}
+                >
+                  {t('ui.openInGoogleMaps')}
+                </a>
+                {selectedPlace.website && (
+                  <a
+                    href={selectedPlace.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={{ background: 'transparent', color: '#e8a820', border: '2px solid #e8a820' }}
+                  >
+                    {t('ui.website')} →
+                  </a>
+                )}
+              </div>
             </div>
           )}
         </div>
