@@ -10,6 +10,8 @@
     },
     "close": "Close",
     "openInGoogleMaps": "Open in Google Maps →",
+    "openIn2gis": "Open in 2GIS →",
+    "openOnMap": "Open on map →",
     "tip": "Tip",
     "hours": "Hours",
     "address": "Address",
@@ -43,10 +45,17 @@
       "address": "104 Aliyev St., 1st floor, Osh",
       "hours": "Mon–Fri 09:00–23:00, Sat–Sun 10:00–23:00"
     },
+    "15": {
+      "name": "Moqqo",
+      "description": "Coffee shop. Natural coffee. European cuisine and desserts.",
+      "address": "298/1a Alymbek Datka St., Osh",
+      "hours": "Daily 08:00–24:00, kitchen 09:00–23:30"
+    },
     "6": {
-      "name": "Boorsok",
-      "description": "Cafe with national dishes and boorsok (fried dough).",
-      "tip": "Boorsok with honey for breakfast — a local classic"
+      "name": "Borsok",
+      "description": "Over 25 years in business. New menu, open around the clock.",
+      "address": "209 Kurmanzhan Datka St., Osh",
+      "hours": "Daily 00:00–24:00, break 06:00–07:00. Delivery 24/7"
     }
   },
   "categories": {

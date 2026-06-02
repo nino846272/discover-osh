@@ -51,6 +51,12 @@ function getPlaceField(place, field, tPlace) {
   return tPlace(place.id, field, place[field] ?? '')
 }
 
+function getMapLinkLabel(mapsUrl, t) {
+  if (mapsUrl?.includes('2gis')) return t('ui.openIn2gis')
+  if (mapsUrl?.includes('google') || mapsUrl?.includes('goo.gl')) return t('ui.openInGoogleMaps')
+  return t('ui.openOnMap')
+}
+
 function createMarkerIcon(color, leafletLib) {
   return leafletLib.divIcon({
     className: '',
@@ -424,7 +430,10 @@ export default function App() {
                   className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
                   style={{ background: '#e8a820', color: '#1a1209' }}
                 >
-                  {t('ui.openInGoogleMaps')}
+                  {getMapLinkLabel(
+                    selectedPlace.mapsUrl || `https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`,
+                    t
+                  )}
                 </a>
                 {selectedPlace.website && (
                   <a
