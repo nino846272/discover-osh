@@ -423,18 +423,43 @@ export default function App() {
                 </button>
               </div>
               <div className="flex flex-wrap gap-2 mt-3">
-                <a
-                  href={selectedPlace.mapsUrl || `https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                  style={{ background: '#e8a820', color: '#1a1209' }}
-                >
-                  {getMapLinkLabel(
-                    selectedPlace.mapsUrl || `https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`,
-                    t
-                  )}
-                </a>
+                {selectedPlace.googleMapsUrl && (
+                  <a
+                    href={selectedPlace.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={{ background: '#e8a820', color: '#1a1209' }}
+                  >
+                    {t('ui.openInGoogleMaps')}
+                  </a>
+                )}
+                {selectedPlace.mapsUrl && (
+                  <a
+                    href={selectedPlace.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={
+                      selectedPlace.googleMapsUrl
+                        ? { background: 'transparent', color: '#e8a820', border: '2px solid #e8a820' }
+                        : { background: '#e8a820', color: '#1a1209' }
+                    }
+                  >
+                    {getMapLinkLabel(selectedPlace.mapsUrl, t)}
+                  </a>
+                )}
+                {!selectedPlace.googleMapsUrl && !selectedPlace.mapsUrl && (
+                  <a
+                    href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={{ background: '#e8a820', color: '#1a1209' }}
+                  >
+                    {t('ui.openOnMap')}
+                  </a>
+                )}
                 {selectedPlace.website && (
                   <a
                     href={selectedPlace.website}

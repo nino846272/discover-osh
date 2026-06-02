@@ -51,6 +51,12 @@
       "address": "298/1a Alymbek Datka St., Osh",
       "hours": "Daily 08:00–24:00, kitchen 09:00–23:30"
     },
+    "7": {
+      "name": "Na Uglyakh",
+      "description": "Cafe. Charcoal shashlik.",
+      "address": "245 Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Daily 10:00–02:00"
+    },
     "6": {
       "name": "Borsok",
       "description": "Over 25 years in business. New menu, open around the clock.",
