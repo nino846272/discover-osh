@@ -3,9 +3,11 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 import { LanguageProvider } from './context/LanguageContext'
+import { Analytics } from "@vercel/analytics/next"
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <Analytics />
     <LanguageProvider>
       <App />
     </LanguageProvider>
