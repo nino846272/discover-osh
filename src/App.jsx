@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
 import {
-  MapPin, UtensilsCrossed, Flame, Wheat, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
+  MapPin, UtensilsCrossed, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
 } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 
@@ -11,8 +11,6 @@ let L = null
 const ICON_MAP = {
   MapPin: MapPin,
   UtensilsCrossed: UtensilsCrossed,
-  Flame: Flame,
-  Wheat: Wheat,
   Waves: Waves,
   DollarSign: DollarSign,
 }
@@ -20,8 +18,6 @@ const ICON_MAP = {
 const CATEGORY_ICON_MAP = {
   pool: Waves,
   bank: DollarSign,
-  shashlik: Flame,
-  samsa: Wheat,
   food: UtensilsCrossed,
 }
 
@@ -33,11 +29,9 @@ function getPlaceIcon(place) {
 }
 
 const CATEGORY_COLORS = {
-  food:     '#e85d20',
-  shashlik: '#c0392b',
-  samsa:    '#d35400',
-  pool:     '#2980b9',
-  bank:     '#27ae60',
+  food: '#e85d20',
+  pool: '#2980b9',
+  bank: '#27ae60',
 }
 
 function getCategoryColor(place) {

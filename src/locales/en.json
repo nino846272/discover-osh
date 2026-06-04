@@ -57,18 +57,37 @@
       "address": "245 Kurmanzhan Datka St., 1st floor, Osh",
       "hours": "Daily 10:00–02:00"
     },
+    "8": {
+      "name": "Ojak Kebap",
+      "description": "Turkish cuisine restaurant. Eastern-style kebab.",
+      "address": "Osh",
+      "hours": "Daily 24/7",
+      "tip": "Try the lulya kebab and adyrman"
+    },
     "6": {
       "name": "Borsok",
       "description": "Over 25 years in business. New menu, open around the clock.",
       "address": "209 Kurmanzhan Datka St., Osh",
       "hours": "Daily 00:00–24:00, break 06:00–07:00. Delivery 24/7"
+    },
+    "13": {
+      "name": "MBank",
+      "description": "Head office. Currency exchange, transfers, mobile app.",
+      "address": "119 Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Mon–Fri 08:30–17:00, break 12:00–13:00, closed Sat–Sun",
+      "tip": "Convenient MBank mobile app"
+    },
+    "14": {
+      "name": "Kompanion Bank",
+      "description": "Osh branch. Currency exchange, transfers, loans.",
+      "address": "224a/1 Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Mon–Fri 08:30–17:30, cash desk 09:00–17:00",
+      "tip": "Online loans in the Kompanion app"
     }
   },
   "categories": {
     "all": "All Places",
     "food": "Cafe / Food",
-    "shashlik": "Shashlik",
-    "samsa": "Samsa / Plov",
     "pool": "Pool",
     "bank": "Banks / Exchange"
   }
