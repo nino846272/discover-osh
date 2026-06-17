@@ -51,18 +51,73 @@
       "address": "298/1a Alymbek Datka St., Osh",
       "hours": "Daily 08:00–24:00, kitchen 09:00–23:30"
     },
+    "7": {
+      "name": "Na Uglyakh",
+      "description": "Cafe. Charcoal shashlik.",
+      "address": "245 Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Daily 10:00–02:00"
+    },
+    "18": {
+      "name": "Brio",
+      "description": "Coffee shop. Breakfast, burgers, pizza, salads. Free Wi-Fi, laptop-friendly.",
+      "address": "211 Kurmanzhan Datka St., Osh",
+      "hours": "Daily 08:00–22:00",
+      "tip": "Breakfast, takeaway coffee, good for working on a laptop"
+    },
+    "8": {
+      "name": "Ojak Kebap",
+      "description": "Turkish cuisine restaurant. Eastern-style kebab.",
+      "address": "Osh",
+      "hours": "Daily 24/7",
+      "tip": "Try the lulya kebab and adyrman"
+    },
     "6": {
       "name": "Borsok",
       "description": "Over 25 years in business. New menu, open around the clock.",
       "address": "209 Kurmanzhan Datka St., Osh",
       "hours": "Daily 00:00–24:00, break 06:00–07:00. Delivery 24/7"
+    },
+    "12": {
+      "name": "DemirBank",
+      "description": "Bank branch. Currency exchange, transfers, ATMs.",
+      "address": "180a Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Mon–Fri 09:00–17:45, break 12:00–13:00, closed Sat–Sun",
+      "tip": "Good USD and EUR exchange rates"
+    },
+    "13": {
+      "name": "MBank",
+      "description": "Head office. Currency exchange, transfers, mobile app.",
+      "address": "119 Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Mon–Fri 08:30–17:00, break 12:00–13:00, closed Sat–Sun",
+      "tip": "Convenient MBank mobile app"
+    },
+    "17": {
+      "name": "Neman",
+      "description": "Pharmacy branch №22. Medicines, health products, online orders.",
+      "address": "159 Kurmanzhan Datka St., Osh",
+      "hours": "Daily 08:00–22:00",
+      "tip": "Order online at neman.kg — over 10,000 products"
+    },
+    "16": {
+      "name": "Osh Bazaar",
+      "description": "Huge central market. Produce, spices, clothes, household goods.",
+      "address": "101/7a Bekmamat Osmonov St., Osh, Kara-Suu district",
+      "hours": "Daily 09:00–21:00",
+      "tip": "Come in the morning — fresher goods and fewer crowds"
+    },
+    "14": {
+      "name": "Kompanion Bank",
+      "description": "Osh branch. Currency exchange, transfers, loans.",
+      "address": "224a/1 Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Mon–Fri 08:30–17:30, cash desk 09:00–17:00",
+      "tip": "Online loans in the Kompanion app"
     }
   },
   "categories": {
     "all": "All Places",
     "food": "Cafe / Food",
-    "shashlik": "Shashlik",
-    "samsa": "Samsa / Plov",
+    "market": "Markets",
+    "pharmacy": "Pharmacies",
     "pool": "Pool",
     "bank": "Banks / Exchange"
   }

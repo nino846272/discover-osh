@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
 import {
-  MapPin, UtensilsCrossed, Flame, Wheat, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
+  MapPin, UtensilsCrossed, ShoppingBag, Pill, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
 } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 
@@ -11,8 +11,8 @@ let L = null
 const ICON_MAP = {
   MapPin: MapPin,
   UtensilsCrossed: UtensilsCrossed,
-  Flame: Flame,
-  Wheat: Wheat,
+  ShoppingBag: ShoppingBag,
+  Pill: Pill,
   Waves: Waves,
   DollarSign: DollarSign,
 }
@@ -20,9 +20,9 @@ const ICON_MAP = {
 const CATEGORY_ICON_MAP = {
   pool: Waves,
   bank: DollarSign,
-  shashlik: Flame,
-  samsa: Wheat,
   food: UtensilsCrossed,
+  market: ShoppingBag,
+  pharmacy: Pill,
 }
 
 function getPlaceIcon(place) {
@@ -33,11 +33,11 @@ function getPlaceIcon(place) {
 }
 
 const CATEGORY_COLORS = {
-  food:     '#e85d20',
-  shashlik: '#c0392b',
-  samsa:    '#d35400',
-  pool:     '#2980b9',
-  bank:     '#27ae60',
+  food: '#e85d20',
+  market: '#9b59b6',
+  pharmacy: '#1abc9c',
+  pool: '#2980b9',
+  bank: '#27ae60',
 }
 
 function getCategoryColor(place) {
@@ -423,18 +423,43 @@ export default function App() {
                 </button>
               </div>
               <div className="flex flex-wrap gap-2 mt-3">
-                <a
-                  href={selectedPlace.mapsUrl || `https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                  style={{ background: '#e8a820', color: '#1a1209' }}
-                >
-                  {getMapLinkLabel(
-                    selectedPlace.mapsUrl || `https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`,
-                    t
-                  )}
-                </a>
+                {selectedPlace.googleMapsUrl && (
+                  <a
+                    href={selectedPlace.googleMapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={{ background: '#e8a820', color: '#1a1209' }}
+                  >
+                    {t('ui.openInGoogleMaps')}
+                  </a>
+                )}
+                {selectedPlace.mapsUrl && (
+                  <a
+                    href={selectedPlace.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={
+                      selectedPlace.googleMapsUrl
+                        ? { background: 'transparent', color: '#e8a820', border: '2px solid #e8a820' }
+                        : { background: '#e8a820', color: '#1a1209' }
+                    }
+                  >
+                    {getMapLinkLabel(selectedPlace.mapsUrl, t)}
+                  </a>
+                )}
+                {!selectedPlace.googleMapsUrl && !selectedPlace.mapsUrl && (
+                  <a
+                    href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
+                    style={{ background: '#e8a820', color: '#1a1209' }}
+                  >
+                    {t('ui.openOnMap')}
+                  </a>
+                )}
                 {selectedPlace.website && (
                   <a
                     href={selectedPlace.website}
