@@ -57,6 +57,13 @@
       "address": "245 Kurmanzhan Datka St., 1st floor, Osh",
       "hours": "Daily 10:00–02:00"
     },
+    "18": {
+      "name": "Brio",
+      "description": "Coffee shop. Breakfast, burgers, pizza, salads. Free Wi-Fi, laptop-friendly.",
+      "address": "211 Kurmanzhan Datka St., Osh",
+      "hours": "Daily 08:00–22:00",
+      "tip": "Breakfast, takeaway coffee, good for working on a laptop"
+    },
     "8": {
       "name": "Ojak Kebap",
       "description": "Turkish cuisine restaurant. Eastern-style kebab.",
@@ -70,12 +77,33 @@
       "address": "209 Kurmanzhan Datka St., Osh",
       "hours": "Daily 00:00–24:00, break 06:00–07:00. Delivery 24/7"
     },
+    "12": {
+      "name": "DemirBank",
+      "description": "Bank branch. Currency exchange, transfers, ATMs.",
+      "address": "180a Kurmanzhan Datka St., 1st floor, Osh",
+      "hours": "Mon–Fri 09:00–17:45, break 12:00–13:00, closed Sat–Sun",
+      "tip": "Good USD and EUR exchange rates"
+    },
     "13": {
       "name": "MBank",
       "description": "Head office. Currency exchange, transfers, mobile app.",
       "address": "119 Kurmanzhan Datka St., 1st floor, Osh",
       "hours": "Mon–Fri 08:30–17:00, break 12:00–13:00, closed Sat–Sun",
       "tip": "Convenient MBank mobile app"
+    },
+    "17": {
+      "name": "Neman",
+      "description": "Pharmacy branch №22. Medicines, health products, online orders.",
+      "address": "159 Kurmanzhan Datka St., Osh",
+      "hours": "Daily 08:00–22:00",
+      "tip": "Order online at neman.kg — over 10,000 products"
+    },
+    "16": {
+      "name": "Osh Bazaar",
+      "description": "Huge central market. Produce, spices, clothes, household goods.",
+      "address": "101/7a Bekmamat Osmonov St., Osh, Kara-Suu district",
+      "hours": "Daily 09:00–21:00",
+      "tip": "Come in the morning — fresher goods and fewer crowds"
     },
     "14": {
       "name": "Kompanion Bank",
@@ -88,6 +116,8 @@
   "categories": {
     "all": "All Places",
     "food": "Cafe / Food",
+    "market": "Markets",
+    "pharmacy": "Pharmacies",
     "pool": "Pool",
     "bank": "Banks / Exchange"
   }

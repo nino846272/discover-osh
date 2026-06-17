@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
 import {
-  MapPin, UtensilsCrossed, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
+  MapPin, UtensilsCrossed, ShoppingBag, Pill, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
 } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 
@@ -11,6 +11,8 @@ let L = null
 const ICON_MAP = {
   MapPin: MapPin,
   UtensilsCrossed: UtensilsCrossed,
+  ShoppingBag: ShoppingBag,
+  Pill: Pill,
   Waves: Waves,
   DollarSign: DollarSign,
 }
@@ -19,6 +21,8 @@ const CATEGORY_ICON_MAP = {
   pool: Waves,
   bank: DollarSign,
   food: UtensilsCrossed,
+  market: ShoppingBag,
+  pharmacy: Pill,
 }
 
 function getPlaceIcon(place) {
@@ -30,6 +34,8 @@ function getPlaceIcon(place) {
 
 const CATEGORY_COLORS = {
   food: '#e85d20',
+  market: '#9b59b6',
+  pharmacy: '#1abc9c',
   pool: '#2980b9',
   bank: '#27ae60',
 }
