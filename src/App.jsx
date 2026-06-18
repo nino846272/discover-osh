@@ -225,7 +225,15 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col" style={{ fontFamily: "'Nunito', sans-serif", background: '#1a1209' }}>
+    <div
+      className="w-screen flex flex-col overflow-hidden"
+      style={{
+        height: '100dvh',
+        minHeight: '100dvh',
+        fontFamily: "'Nunito', sans-serif",
+        background: '#1a1209',
+      }}
+    >
 
       {/* Header */}
       <header className="flex-shrink-0 px-4 pt-4 pb-3" style={{ background: '#1a1209' }}>
@@ -286,7 +294,7 @@ export default function App() {
       </header>
 
       {/* Main content */}
-      <div className="relative flex flex-1 overflow-hidden gap-0 md:flex-row flex-col">
+      <div className="relative flex min-h-0 flex-1 overflow-hidden gap-0 md:flex-row flex-col">
         {sidebarOpen && (
           <div
             className="fixed inset-0 z-[9999] bg-black/40 md:hidden"
@@ -346,8 +354,8 @@ export default function App() {
         </div>
 
         {/* Map + detail panel */}
-        <div className="flex-1 flex flex-col overflow-hidden relative">
-          <div ref={mapRef} className="flex-1 relative z-0" />
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div ref={mapRef} className="relative z-0 flex-1" />
 
           <div className="absolute left-3 bottom-24 z-[1000] flex flex-col items-start gap-2 md:bottom-3">
             <button
