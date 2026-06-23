@@ -357,7 +357,7 @@ export default function App() {
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
           <div ref={mapRef} className="relative z-0 flex-1" />
 
-          <div className="absolute left-3 bottom-24 z-[1000] flex flex-col items-start gap-2 md:bottom-3">
+          <div className="absolute right-3 bottom-24 z-[1000] flex flex-col items-end gap-2 md:bottom-3">
             <button
               type="button"
               onClick={locateUser}
