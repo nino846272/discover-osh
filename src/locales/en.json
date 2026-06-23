@@ -2,8 +2,8 @@
   "ui": {
     "title": "OSH",
     "subtitle": "Best places in the city",
-    "mobilePlacesButton": "Places",
-    "toursLink": "← Gastro-ethno tour in Kyrgyzstan",
+    "searchPlaceholder": "Find coffee, breakfast, sights...",
+    "toursLink": "✨ Gastro-Tours in Kyrgyzstan →",
     "placesCount": {
       "one": "place found",
       "other": "places found"
@@ -115,6 +115,8 @@
   },
   "categories": {
     "all": "All Places",
+    "coffee": "Coffee",
+    "breakfast": "Breakfasts",
     "food": "Cafe / Food",
     "market": "Markets",
     "pharmacy": "Pharmacies",

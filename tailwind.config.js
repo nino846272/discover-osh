@@ -15,11 +15,11 @@ export default {
           300: '#d4a032',
         },
         osh: {
-          deep: '#1a1209',
-          warm: '#2d1f0a',
-          accent: '#c8860a',
-          gold: '#e8a820',
-          light: '#fdf4e3',
+          deep: '#120e0a',
+          warm: '#1c1510',
+          accent: '#caa263',
+          gold: '#d49b41',
+          light: '#f5e6c8',
         }
       }
     },

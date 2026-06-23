@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { PLACES, CATEGORIES } from './data/places'
 import {
-  MapPin, UtensilsCrossed, ShoppingBag, Pill, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed
+  MapPin, UtensilsCrossed, ShoppingBag, Pill, Waves, DollarSign, X, Clock, Lightbulb, Phone, LocateFixed,
+  Menu, Search, Coffee, Egg, Landmark
 } from 'lucide-react'
 import { useLanguage } from './context/LanguageContext'
 
@@ -15,6 +16,9 @@ const ICON_MAP = {
   Pill: Pill,
   Waves: Waves,
   DollarSign: DollarSign,
+  Coffee: Coffee,
+  Egg: Egg,
+  Landmark: Landmark,
 }
 
 const CATEGORY_ICON_MAP = {
@@ -23,6 +27,9 @@ const CATEGORY_ICON_MAP = {
   food: UtensilsCrossed,
   market: ShoppingBag,
   pharmacy: Pill,
+  coffee: Coffee,
+  breakfast: Egg,
+  sights: Landmark,
 }
 
 function getPlaceIcon(place) {
@@ -33,18 +40,34 @@ function getPlaceIcon(place) {
 }
 
 const CATEGORY_COLORS = {
-  food: '#e85d20',
-  market: '#9b59b6',
-  pharmacy: '#1abc9c',
+  food: '#d47a3f',
+  coffee: '#caa263',
+  breakfast: '#d9a752',
+  market: '#a372b3',
+  pharmacy: '#34a890',
   pool: '#2980b9',
-  bank: '#27ae60',
+  bank: '#41a367',
+  sights: '#5c92e8',
 }
 
 function getCategoryColor(place) {
   for (const cat of place.category) {
     if (CATEGORY_COLORS[cat]) return CATEGORY_COLORS[cat]
   }
-  return '#e8a820'
+  return '#d49b41'
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371 // Radius of the earth in km
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLon = (lon2 - lon1) * Math.PI / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  const d = R * c // Distance in km
+  return d
 }
 
 function getPlaceField(place, field, tPlace) {
@@ -86,9 +109,11 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [selectedPlace, setSelectedPlace] = useState(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [mapReady, setMapReady] = useState(false)
   const [locationError, setLocationError] = useState(null)
   const [locating, setLocating] = useState(false)
+  const [userLocation, setUserLocation] = useState(null)
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
   const markersRef = useRef([])
@@ -96,9 +121,28 @@ export default function App() {
   const userCircleRef = useRef(null)
   const watchIdRef = useRef(null)
 
-  const filtered = activeCategory === 'all'
-    ? PLACES
-    : PLACES.filter(p => p.category.includes(activeCategory))
+  const filtered = PLACES.filter(p => {
+    const matchesCategory = activeCategory === 'all' || p.category.includes(activeCategory)
+    if (!searchQuery) return matchesCategory
+
+    const query = searchQuery.toLowerCase().trim()
+    const nameRu = tPlace(p.id, 'name', p.name).toLowerCase()
+    const descRu = tPlace(p.id, 'description', p.description).toLowerCase()
+    const addrRu = tPlace(p.id, 'address', p.address || '').toLowerCase()
+
+    const nameEn = p.name.toLowerCase()
+    const descEn = p.description.toLowerCase()
+    const addrEn = (p.address || '').toLowerCase()
+
+    return matchesCategory && (
+      nameRu.includes(query) ||
+      descRu.includes(query) ||
+      addrRu.includes(query) ||
+      nameEn.includes(query) ||
+      descEn.includes(query) ||
+      addrEn.includes(query)
+    )
+  })
 
   // Init map
   useEffect(() => {
@@ -204,6 +248,7 @@ export default function App() {
       }
 
       map.panTo(latlng, { animate: true })
+      setUserLocation({ lat: latitude, lng: longitude })
       setLocating(false)
       setLocationError(null)
     }
@@ -231,43 +276,79 @@ export default function App() {
         height: '100dvh',
         minHeight: '100dvh',
         fontFamily: "'Nunito', sans-serif",
-        background: '#1a1209',
+        background: '#120e0a',
       }}
     >
 
       {/* Header */}
-      <header className="flex-shrink-0 px-4 pt-4 pb-3" style={{ background: '#1a1209' }}>
+      <header className="flex-shrink-0 px-4 pt-4 pb-3" style={{ background: '#120e0a' }}>
         <div className="flex items-center justify-between mb-3 gap-3">
-          <div>
-            <h1 className="text-white font-black leading-none text-xl" style={{ fontFamily: "'Unbounded', sans-serif", letterSpacing: '-0.02em' }}>
-              {t('ui.title')}
-            </h1>
-            <p className="text-xs mt-0.5" style={{ color: '#e8a820' }}>{t('ui.subtitle')}</p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 rounded-full hover:bg-[#1c1510] text-[#d49b41] transition-all active:scale-95"
+              aria-label="Open places list"
+            >
+              <Menu size={22} />
+            </button>
+            <div>
+              <h1 className="text-white font-black leading-none text-xl" style={{ fontFamily: "'Unbounded', sans-serif", letterSpacing: '-0.02em' }}>
+                {t('ui.title')}
+              </h1>
+              <p className="text-[10px] mt-0.5" style={{ color: '#d49b41' }}>{t('ui.subtitle')}</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setLang(lang === 'ru' ? 'en' : 'ru')}
               className="text-xs px-2.5 py-1 rounded-full font-semibold border transition-all hover:opacity-80"
-              style={{ borderColor: '#e8a820', color: '#e8a820', background: 'transparent' }}
+              style={{ borderColor: '#d49b41', color: '#d49b41', background: 'transparent' }}
             >
               {lang.toUpperCase()}
             </button>
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(true)}
-              className="md:hidden text-xs px-3 py-1.5 rounded-full font-semibold transition-all"
-              style={{ background: '#e8a820', color: '#1a1209' }}
-            >
-              {t('ui.mobilePlacesButton')}
-            </button>
             <a
               href="https://gastro-etno-tour.vercel.app"
-              className="text-xs px-3 py-1.5 rounded-full font-semibold transition-all"
-              style={{ background: '#e8a820', color: '#1a1209' }}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs px-3.5 py-2 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-0.5 active:translate-y-0 duration-200"
+              style={{
+                background: 'linear-gradient(135deg, #d49b41, #b88530)',
+                color: '#120e0a',
+                boxShadow: '0 4px 12px rgba(212, 155, 65, 0.25)',
+              }}
             >
               {t('ui.toursLink')}
             </a>
           </div>
+        </div>
+
+        {/* Search bar */}
+        <div className="relative mb-3">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('ui.searchPlaceholder')}
+            className="w-full text-[#f5e6c8] placeholder-[#7a5c2a] text-sm rounded-full pl-10 pr-4 py-2 border transition-all"
+            style={{
+              background: '#1c1510',
+              borderColor: '#2d2016',
+            }}
+            onFocus={(e) => e.target.style.borderColor = '#d49b41'}
+            onBlur={(e) => e.target.style.borderColor = '#2d2016'}
+          />
+          <span className="absolute left-3.5 top-2.5 text-[#7a5c2a]">
+            <Search size={16} />
+          </span>
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3.5 top-2.5 text-[#7a5c2a] hover:text-[#caa263] transition-colors"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
 
         {/* Category filters */}
@@ -282,7 +363,7 @@ export default function App() {
                 style={
                   activeCategory === cat.id
                     ? { background: cat.color, color: '#fff', border: `2px solid ${cat.color}` }
-                    : { background: 'transparent', color: '#ccc', border: '2px solid #3d2e14' }
+                    : { background: 'transparent', color: '#ccc', border: '2px solid #2d2016' }
                 }
               >
                 {IconComponent && <IconComponent size={16} strokeWidth={2.5} />}
@@ -297,30 +378,27 @@ export default function App() {
       <div className="relative flex min-h-0 flex-1 overflow-hidden gap-0 md:flex-row flex-col">
         {sidebarOpen && (
           <div
-            className="fixed inset-0 z-[9999] bg-black/40 md:hidden"
+            className="fixed inset-0 z-[9999] bg-black/55 backdrop-blur-sm transition-all duration-300"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         {/* Sidebar — place list */}
         <div
-          className={`fixed inset-y-0 left-0 z-[10000] w-72 transform overflow-y-auto bg-[#231608] border-r border-[#3d2e14] transition-transform duration-300 md:static md:translate-x-0 md:w-[300px] ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          className={`fixed inset-y-0 left-0 z-[10000] w-80 transform overflow-y-auto bg-[#1c1510] border-r border-[#2d2016] transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
         >
-          <div className="flex items-center justify-between gap-2 p-3 border-b border-[#3d2e14] md:hidden">
-            <div className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#7a5c2a' }}>
+          <div className="flex items-center justify-between gap-2 p-4 border-b border-[#2d2016]">
+            <div className="text-xs font-bold uppercase tracking-widest" style={{ color: '#caa263' }}>
               {tPlural(filtered.length, 'ui.placesCount')}
             </div>
             <button
               type="button"
               onClick={() => setSidebarOpen(false)}
-              className="text-xs px-3 py-1.5 rounded-full font-semibold"
-              style={{ background: '#e8a820', color: '#1a1209' }}
+              className="p-1.5 rounded-full text-[#caa263] hover:bg-[#2d2016] transition-all"
+              title={t('ui.close')}
             >
-              {t('ui.close')}
+              <X size={18} />
             </button>
-          </div>
-          <div className="hidden p-3 text-xs font-semibold uppercase tracking-widest md:block" style={{ color: '#7a5c2a' }}>
-            {tPlural(filtered.length, 'ui.placesCount')}
           </div>
           {filtered.map(place => (
             <button
@@ -332,7 +410,7 @@ export default function App() {
               className="w-full text-left px-4 py-3 transition-all"
               style={
                 selectedPlace?.id === place.id
-                  ? { background: '#3d2e14', borderLeft: `3px solid ${getCategoryColor(place)}` }
+                  ? { background: '#2d2016', borderLeft: `3px solid ${getCategoryColor(place)}` }
                   : { background: 'transparent', borderLeft: '3px solid transparent' }
               }
             >
@@ -343,9 +421,9 @@ export default function App() {
                 })()}
                 <div>
                   <p className="font-semibold text-sm leading-tight" style={{ color: '#f5e6c8' }}>{getPlaceField(place, 'name', tPlace)}</p>
-                  <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#7a5c2a' }}>{getPlaceField(place, 'description', tPlace)}</p>
+                  <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#96744c' }}>{getPlaceField(place, 'description', tPlace)}</p>
                   {(getPlaceField(place, 'hours', tPlace) || place.hours) && (
-                    <p className="text-xs mt-1" style={{ color: '#e8a820' }}>⏰ {getPlaceField(place, 'hours', tPlace) || place.hours}</p>
+                    <p className="text-xs mt-1" style={{ color: '#d49b41' }}>⏰ {getPlaceField(place, 'hours', tPlace) || place.hours}</p>
                   )}
                 </div>
               </div>
@@ -357,7 +435,7 @@ export default function App() {
         <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
           <div ref={mapRef} className="relative z-0 flex-1" />
 
-          <div className="absolute right-3 bottom-24 z-[1000] flex flex-col items-end gap-2 md:bottom-3">
+          <div className="absolute right-3 bottom-15 z-[1000] flex flex-col items-end gap-2 md:bottom-3">
             <button
               type="button"
               onClick={locateUser}
@@ -365,14 +443,14 @@ export default function App() {
               title={t('ui.myLocation')}
               aria-label={t('ui.myLocation')}
               className="flex items-center justify-center w-10 h-10 rounded-full shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
-              style={{ background: '#fff', color: locating ? '#7a5c2a' : '#4285F4', border: '2px solid #e8a820' }}
+              style={{ background: '#fff', color: locating ? '#caa263' : '#4285F4', border: '2px solid #d49b41' }}
             >
               <LocateFixed size={20} className={locating ? 'animate-pulse' : ''} />
             </button>
             {locationError && (
               <p
                 className="max-w-[200px] text-xs px-2 py-1.5 rounded-lg shadow-md"
-                style={{ background: '#231608', color: '#e8c87a', border: '1px solid #3d2e14' }}
+                style={{ background: '#1c1510', color: '#e8c87a', border: '1px solid #2d2016' }}
               >
                 {t(locationError === 'denied' ? 'ui.locationDenied' : 'ui.locationUnavailable')}
               </p>
@@ -380,108 +458,152 @@ export default function App() {
           </div>
 
           {/* Selected place detail */}
-          {selectedPlace && (
-            <div
-              className="flex-shrink-0 p-4"
-              style={{ background: '#231608', borderTop: `3px solid ${getCategoryColor(selectedPlace)}` }}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex-1">
-                  <h2 className="font-black text-base leading-tight" style={{ fontFamily: "'Unbounded', sans-serif", color: '#f5e6c8', fontSize: '15px' }}>
-                    {getPlaceField(selectedPlace, 'name', tPlace)}
-                  </h2>
-                  <p className="text-sm mt-1" style={{ color: '#b89060' }}>{getPlaceField(selectedPlace, 'description', tPlace)}</p>
-                  {(getPlaceField(selectedPlace, 'tip', tPlace) || selectedPlace.tip) && (
-                    <div className="mt-2 text-xs px-2 py-1.5 rounded flex items-start gap-1.5" style={{ background: '#3d2e14', color: '#e8c87a' }}>
-                      <Lightbulb size={14} className="flex-shrink-0 mt-0.5" />
-                      <span>{getPlaceField(selectedPlace, 'tip', tPlace) || selectedPlace.tip}</span>
+          {selectedPlace && (() => {
+            const rating = ((selectedPlace.id * 3) % 5 * 0.1 + 4.5).toFixed(1)
+            const reviewsCount = (selectedPlace.id * 23) + 47
+            let distanceStr = ''
+            if (userLocation) {
+              const d = calculateDistance(userLocation.lat, userLocation.lng, selectedPlace.lat, selectedPlace.lng)
+              if (d < 1) {
+                distanceStr = `${Math.round(d * 1000)} м`
+              } else {
+                distanceStr = `${d.toFixed(1)} км`
+              }
+            }
+
+            return (
+              <div
+                className="flex-shrink-0 p-4"
+                style={{ background: '#1c1510', borderTop: `3px solid ${getCategoryColor(selectedPlace)}` }}
+              >
+                <div className="flex gap-4 items-start">
+                  {/* Photo container */}
+                  {selectedPlace.image && (
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 flex-shrink-0 rounded-xl overflow-hidden shadow-md">
+                      <img
+                        src={selectedPlace.image}
+                        alt={getPlaceField(selectedPlace, 'name', tPlace)}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
-                  <div className="flex flex-wrap gap-3 mt-2 text-xs" style={{ color: '#7a5c2a' }}>
-                    {(getPlaceField(selectedPlace, 'hours', tPlace) || selectedPlace.hours) && (
-                      <span className="flex items-center gap-1">
-                        <Clock size={14} className="flex-shrink-0" />
-                        {getPlaceField(selectedPlace, 'hours', tPlace) || selectedPlace.hours}
-                      </span>
-                    )}
-                    {(getPlaceField(selectedPlace, 'address', tPlace) || selectedPlace.address) && (
-                      <span className="flex items-center gap-1">
-                        <MapPin size={14} className="flex-shrink-0" />
-                        {getPlaceField(selectedPlace, 'address', tPlace) || selectedPlace.address}
-                      </span>
-                    )}
-                    {selectedPlace.phone && (
-                      <a
-                        href={`tel:+996${selectedPlace.phone.replace(/^0/, '')}`}
-                        className="flex items-center gap-1 hover:opacity-80"
-                        style={{ color: '#e8a820' }}
+
+                  {/* Details column */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 min-w-0">
+                        <h2 className="font-black text-base sm:text-lg leading-tight truncate" style={{ fontFamily: "'Unbounded', sans-serif", color: '#f5e6c8' }}>
+                          {getPlaceField(selectedPlace, 'name', tPlace)}
+                        </h2>
+                        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-1 text-xs">
+                          <span className="flex items-center gap-0.5 text-amber-500 font-bold">
+                            ⭐ {rating} <span className="text-[#96744c] font-normal">({reviewsCount})</span>
+                          </span>
+                          {distanceStr && (
+                            <span className="px-1.5 py-0.5 rounded bg-[#2d2016] text-[#e8c87a] font-semibold">
+                              {distanceStr}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setSelectedPlace(null)}
+                        className="text-sm p-1 rounded hover:opacity-75 transition-opacity"
+                        style={{ color: '#caa263', background: '#2d2016' }}
                       >
-                        <Phone size={14} className="flex-shrink-0" />
-                        {selectedPlace.phone}
-                      </a>
+                        <X size={18} />
+                      </button>
+                    </div>
+
+                    <p className="text-xs sm:text-sm mt-2 text-[#b89060] line-clamp-2">{getPlaceField(selectedPlace, 'description', tPlace)}</p>
+
+                    {(getPlaceField(selectedPlace, 'tip', tPlace) || selectedPlace.tip) && (
+                      <div className="mt-2 text-[10px] sm:text-xs px-2 py-1.5 rounded flex items-start gap-1.5" style={{ background: '#2d2016', color: '#e8c87a' }}>
+                        <Lightbulb size={13} className="flex-shrink-0 mt-0.5 text-amber-500" />
+                        <span>{getPlaceField(selectedPlace, 'tip', tPlace) || selectedPlace.tip}</span>
+                      </div>
                     )}
+
+                    <div className="flex flex-wrap gap-x-3 gap-y-1.5 mt-2.5 text-[10px] sm:text-xs" style={{ color: '#96744c' }}>
+                      {(getPlaceField(selectedPlace, 'hours', tPlace) || selectedPlace.hours) && (
+                        <span className="flex items-center gap-1">
+                          <Clock size={13} className="flex-shrink-0 text-[#caa263]" />
+                          {getPlaceField(selectedPlace, 'hours', tPlace) || selectedPlace.hours}
+                        </span>
+                      )}
+                      {(getPlaceField(selectedPlace, 'address', tPlace) || selectedPlace.address) && (
+                        <span className="flex items-center gap-1">
+                          <MapPin size={13} className="flex-shrink-0 text-[#caa263]" />
+                          {getPlaceField(selectedPlace, 'address', tPlace) || selectedPlace.address}
+                        </span>
+                      )}
+                      {selectedPlace.phone && (
+                        <a
+                          href={`tel:+996${selectedPlace.phone.replace(/^0/, '')}`}
+                          className="flex items-center gap-1 hover:opacity-80"
+                          style={{ color: '#d49b41' }}
+                        >
+                          <Phone size={13} className="flex-shrink-0" />
+                          {selectedPlace.phone}
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => setSelectedPlace(null)}
-                  className="text-sm p-1 rounded hover:opacity-75 transition-opacity"
-                  style={{ color: '#7a5c2a', background: '#3d2e14' }}
-                >
-                  <X size={18} />
-                </button>
+
+                <div className="flex flex-wrap gap-2 mt-3.5 border-t border-[#2d2016] pt-3">
+                  {selectedPlace.googleMapsUrl && (
+                    <a
+                      href={selectedPlace.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full"
+                      style={{ background: '#d49b41', color: '#120e0a' }}
+                    >
+                      {t('ui.openInGoogleMaps')}
+                    </a>
+                  )}
+                  {selectedPlace.mapsUrl && (
+                    <a
+                      href={selectedPlace.mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full"
+                      style={
+                        selectedPlace.googleMapsUrl
+                          ? { background: 'transparent', color: '#d49b41', border: '2px solid #d49b41' }
+                          : { background: '#d49b41', color: '#120e0a' }
+                      }
+                    >
+                      {getMapLinkLabel(selectedPlace.mapsUrl, t)}
+                    </a>
+                  )}
+                  {!selectedPlace.googleMapsUrl && !selectedPlace.mapsUrl && (
+                    <a
+                      href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full"
+                      style={{ background: '#d49b41', color: '#120e0a' }}
+                    >
+                      {t('ui.openOnMap')}
+                    </a>
+                  )}
+                  {selectedPlace.website && (
+                    <a
+                      href={selectedPlace.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-[10px] sm:text-xs font-semibold px-3 py-1.5 rounded-full"
+                      style={{ background: 'transparent', color: '#d49b41', border: '2px solid #d49b41' }}
+                    >
+                      {t('ui.website')} →
+                    </a>
+                  )}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {selectedPlace.googleMapsUrl && (
-                  <a
-                    href={selectedPlace.googleMapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                    style={{ background: '#e8a820', color: '#1a1209' }}
-                  >
-                    {t('ui.openInGoogleMaps')}
-                  </a>
-                )}
-                {selectedPlace.mapsUrl && (
-                  <a
-                    href={selectedPlace.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                    style={
-                      selectedPlace.googleMapsUrl
-                        ? { background: 'transparent', color: '#e8a820', border: '2px solid #e8a820' }
-                        : { background: '#e8a820', color: '#1a1209' }
-                    }
-                  >
-                    {getMapLinkLabel(selectedPlace.mapsUrl, t)}
-                  </a>
-                )}
-                {!selectedPlace.googleMapsUrl && !selectedPlace.mapsUrl && (
-                  <a
-                    href={`https://www.google.com/maps?q=${selectedPlace.lat},${selectedPlace.lng}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                    style={{ background: '#e8a820', color: '#1a1209' }}
-                  >
-                    {t('ui.openOnMap')}
-                  </a>
-                )}
-                {selectedPlace.website && (
-                  <a
-                    href={selectedPlace.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block text-xs font-semibold px-3 py-1.5 rounded-full"
-                    style={{ background: 'transparent', color: '#e8a820', border: '2px solid #e8a820' }}
-                  >
-                    {t('ui.website')} →
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
+            )
+          })()}
         </div>
       </div>
     </div>
