@@ -2,8 +2,8 @@
   "ui": {
     "title": "ОШ",
     "subtitle": "Лучшие места города",
-    "mobilePlacesButton": "Места",
-    "toursLink": "← Гастро-этно тур по Кыргызстану",
+    "searchPlaceholder": "Найти кофе, завтрак, плов...",
+    "toursLink": "✨ Гастро-туры по Кыргызстану →",
     "placesCount": {
       "one": "место",
       "few": "места",
@@ -116,6 +116,8 @@
   },
   "categories": {
     "all": "Все места",
+    "coffee": "Кофе",
+    "breakfast": "Завтраки",
     "food": "Кафе / Еда",
     "market": "Рынки",
     "pharmacy": "Аптеки",

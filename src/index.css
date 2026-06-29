@@ -32,7 +32,7 @@ body {
 
 /* Leaflet marker fix */
 .leaflet-container {
-  background: #2d1f0a !important;
+  background: #1c1510 !important;
 }
 
 /* User location on map */
