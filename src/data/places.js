@@ -63,6 +63,8 @@ export const PLACES = [
     phone: '0997520520',
     hours: 'Mon–Fri 09:00–23:00, Sat–Sun 10:00–23:00',
     image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80',
+    googleMapsUrl: 'https://www.google.com/maps/place/Mecto+Coffee/@40.518239,72.798721,19z/data=!3m1!4b1!4m12!1m5!3m4!2zNDDCsDMxJzA1LjciTiA3MsKwNDcnNTcuNyJF!8m2!3d40.5182434!4d72.7993685!3m5!1s0x38bdad004178c777:0xd1538fecbf15d32f!8m2!3d40.518239!4d72.7993647!16s%2Fg%2F11vx7grm1k?entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D',
+    mapsUrl: 'https://2gis.kg/osh/search/mesto%20coffee%20osh/firm/70000001083755714/72.799371%2C40.518194?m=72.799399%2C40.518208%2F18',
   },
   {
     id: 15,
@@ -180,6 +182,7 @@ export const PLACES = [
     image: 'https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?auto=format&fit=crop&w=600&q=80',
     mapsUrl: 'https://2gis.kg/osh/branches/70000001019854736/firm/70000001030613465/72.800017%2C40.521244?m=72.7988%2C40.521526%2F15.86&layer=eta',
     tip: 'Хороший курс доллара и евро',
+    googleMapsUrl: 'https://maps.app.goo.gl/fqf2EqTEYQe1p9Lt8'
   },
   {
     id: 13,
